@@ -7,8 +7,41 @@ public class Main {
     private static final int HALF = SIZE / 2;
 
     public static void main(String[] args) {
-        withConcurrency();
-        withoutConcurrency();
+        startTimer();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                withConcurrency();
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                withoutConcurrency();
+            }
+        }).start();
+
+
+    }
+
+    private static void startTimer(){
+        Thread timer = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int seconds = 0;
+                try {
+                    while (true){
+                        System.out.println(seconds++);
+                        Thread.sleep(1000);
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        timer.setDaemon(true);// поток чорт завершает свою работу после завершения всех основных потоков. Указывается тру или фолсе
+        timer.start();
     }
 
     private static void withoutConcurrency() {
